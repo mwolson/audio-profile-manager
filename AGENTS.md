@@ -92,22 +92,29 @@ Prefer this for iterating on changes before committing.
    git fetch --tags
    ```
 
-3. Update the version in `pyproject.toml`, `package.json`, and the `VERSION`
+3. Run `bun run hooks:check` and confirm everything passes. CI (see
+   `.github/workflows/publish.yml`) only runs on tag push, so this is the last
+   opportunity to catch lint, type-check, and unit-test failures before publish.
+   The pre-commit hook alone is not enough: its `glob` gate filters on
+   `{staged_files}`, which can silently skip entire check groups when the staged
+   set does not match.
+
+4. Update the version in `pyproject.toml`, `package.json`, and the `VERSION`
    constant in `aproman/aproman.py`. Run `uv lock` to update `uv.lock`, then
    commit all four files together with message
    `chore: bump version to <version>`. This must be its own commit, not combined
    with other changes, unless the user explicitly agrees to that.
 
-4. Push the version-bump commit and verify CI passes before tagging:
+5. Push the version-bump commit:
 
    ```sh
    git push
-   gh run watch          # wait for the check job to go green
    ```
 
-   If CI fails, fix the issue and push again before proceeding.
+   There is no branch-push CI to watch; the tag-push CI in the next step is what
+   gates the PyPI publish.
 
-5. Ask the user what tag name they want. Provide examples based on the current
+6. Ask the user what tag name they want. Provide examples based on the current
    version:
    - If current version is `0.2.0`:
      - Minor update (new features): `0.3.0`
@@ -124,7 +131,19 @@ When the user provides a version (or indicates major/minor/bugfix):
    git push origin v<version>
    ```
 
-2. Examine each commit since the last tag to understand the full context:
+2. Wait for the tag-push CI to pass before drafting release notes. This run is
+   what publishes to PyPI, so if it fails the release is incomplete:
+
+   ```sh
+   gh run list --limit 1         # grab the run id
+   gh run watch <run-id> --exit-status
+   ```
+
+   If CI fails, fix the issue on `main`, delete the tag locally and remotely
+   (`git push origin :refs/tags/v<version> && git tag -d v<version>`), re-tag,
+   and push again.
+
+3. Examine each commit since the last tag to understand the full context:
 
    ```sh
    git log <previous-tag>..HEAD --oneline
@@ -134,14 +153,14 @@ When the user provides a version (or indicates major/minor/bugfix):
    diff. Commit messages may be terse or only show the first line in `--oneline`
    output, so examining the full commit is essential for accurate release notes.
 
-3. Create a draft GitHub release:
+4. Create a draft GitHub release:
 
    ```sh
    gh release create v<version> --draft --title "v<version>" --generate-notes
    ```
 
-4. Enhance the release notes with more context:
-   - Use insights from examining each commit in step 2
+5. Enhance the release notes with more context:
+   - Use insights from examining each commit in step 3
    - Group related changes under descriptive headings (e.g., "### Refactored X",
      "### Fixed Y")
    - Use bullet lists within each section to describe the changes
@@ -154,7 +173,7 @@ When the user provides a version (or indicates major/minor/bugfix):
    - Put under-the-hood changes later (refactoring, internal improvements, docs)
    - Within each section, order by user impact (most impactful first)
 
-5. Tell the user to review the draft release and provide a link:
+6. Tell the user to review the draft release and provide a link:
 
    ```
    https://github.com/mwolson/aproman/releases

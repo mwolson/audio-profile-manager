@@ -18,13 +18,15 @@ rebuild of the audio nodes.
 1. Auto-detects your HDMI audio card, or uses the one saved in the config file
 2. Monitors D-Bus for `PrepareForSleep` signals from systemd-logind (or elogind)
 3. On wake, waits briefly for HDMI to renegotiate, then cycles the card profile
-   off and back on
-4. Monitors PipeWire via `pw-dump` for nodes entering an error state, and
-   automatically restarts PipeWire to recover (with a 30-second cooldown to
-   prevent restart loops)
-
-This forces PipeWire and WirePlumber to rebuild fresh nodes, restoring audio
-without manual intervention.
+   off and back on. The profile cycle alone is usually enough to force
+   WirePlumber to rebuild fresh nodes and restore audio.
+4. Separately, monitors PipeWire via `pw-dump` for nodes entering an error
+   state. If one is detected, restarts PipeWire to recover (with a 30-second
+   cooldown to prevent restart loops). This reactive path is a safety net for
+   cases where the profile cycle alone is not enough; it is deliberately kept
+   off the happy resume path because restarting PipeWire churns every client
+   connected to it, and some clients (e.g. quickshell-based shells) handle the
+   churn poorly.
 
 ## Requirements
 
