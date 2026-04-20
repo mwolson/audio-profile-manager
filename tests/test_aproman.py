@@ -108,7 +108,7 @@ class ApromanTests(unittest.TestCase):
     @mock.patch.object(APROMAN, "restart_pipewire")
     @mock.patch.object(APROMAN, "get_active_profile", return_value="pro-audio")
     @mock.patch("builtins.print")
-    def test_cycle_profile_restarts_pipewire_then_restores_profile(
+    def test_cycle_profile_cycles_through_off_without_restarting_pipewire(
         self,
         _print,
         _get_active_profile,
@@ -118,7 +118,7 @@ class ApromanTests(unittest.TestCase):
     ):
         APROMAN.cycle_profile("alsa_card.pci-0000_01_00.1", "output:hdmi-stereo")
 
-        restart_pipewire_mock.assert_called_once()
+        restart_pipewire_mock.assert_not_called()
         self.assertEqual(
             [
                 mock.call("alsa_card.pci-0000_01_00.1", "off", attempts=20, retry_delay=0.25),
