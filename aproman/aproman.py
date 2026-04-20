@@ -754,9 +754,6 @@ def cycle_profile(card_name, target_profile):
         warn(f"Warning: Could not determine active profile for {card_name}. Skipping cycle.")
         return
 
-    log("Restarting pipewire and pipewire-pulse")
-    restart_pipewire()
-
     log(f"Cycling profile on {card_name}: {current_profile} -> off -> {target_profile}")
     if not set_card_profile(card_name, "off", attempts=20, retry_delay=0.25):
         warn("Warning: Failed to set profile to 'off'. Will retry next cycle.")
