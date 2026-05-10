@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aproman"
-version = "0.5.4"
+version = "0.5.5"
 description = "Fix HDMI audio after suspend/resume on PipeWire + WirePlumber"
 license = "MIT"
 readme = "README.md"

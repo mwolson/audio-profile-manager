@@ -2,7 +2,7 @@
   "license": "MIT",
   "name": "aproman-py",
   "private": true,
-  "version": "0.5.4",
+  "version": "0.5.5",
   "scripts": {
     "fix:md": "prettier --write '**/*.md'",
     "fix:md:file": "prettier --write",
