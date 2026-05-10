@@ -176,5 +176,5 @@ When the user provides a version (or indicates major/minor/bugfix):
 6. Tell the user to review the draft release and provide a link:
 
    ```
-   https://github.com/mwolson/aproman/releases
+   https://github.com/mwolson/aproman-py/releases
    ```

@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "aproman",
+      "name": "aproman-py",
       "devDependencies": {
         "lefthook": "^2.1.4",
         "prettier": "^3.8.1",

@@ -86,8 +86,8 @@ Replace `1000` with your user's UID (`id -u youruser`).
 ### Alternative: install.sh (systemd)
 
 ```bash
-git clone https://github.com/mwolson/aproman.git
-cd aproman
+git clone https://github.com/mwolson/aproman-py.git
+cd aproman-py
 ./install.sh
 systemctl --user start aproman.service
 ```
